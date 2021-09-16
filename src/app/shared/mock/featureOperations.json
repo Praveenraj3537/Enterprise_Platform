@@ -1,0 +1,23 @@
+{
+    "DataCollection":[
+        {
+            "Feature": "Platform_Admin_Consumers",
+            "CreateGrant":true,
+            "CreateRevoke":false,
+            "ReadGrant":true,
+            "ReadRevoke":false,
+            "UpdateGrant":true,
+            "UpdateRevoke":false
+
+        },
+        {
+            "Feature": "Platform_Admin_Clients",
+            "CreateGrant":true,
+            "CreateRevoke":false,
+            "ReadGrant":true,
+            "ReadRevoke":false,
+            "UpdateGrant":true,
+            "UpdateRevoke":false
+        }
+    ]
+}

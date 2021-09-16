@@ -1,0 +1,21 @@
+.thumbnail{
+    height: 350px;
+    margin-left: 5px;
+    margin-right: 5px;
+}
+#divContainer{
+    height: 78vh;
+    overflow-y: scroll;
+    position: absolute;
+    padding-top: 2px;
+}
+
+@media screen and (min-width: 150px) and (max-width : 780px)
+{
+    #divContainer{
+        height: 57vh;
+        overflow-y: scroll;
+        position: absolute;
+        padding-top: 2px;
+    }
+}

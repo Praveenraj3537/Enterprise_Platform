@@ -1,0 +1,141 @@
+<header>
+  <nav class="navbar navbar-inverse">
+    <div class="container-fluid">
+      <!------------------------------------- This is slidebar Toggle button -------------------------->
+      <button type="button" id="sidebarCollapse" (click)="ToggleMenu()" class="btn btn-info btn-menu"
+        style="float: left; margin-right: 50px;">
+        <i class="fa fa-bars"></i>
+      </button>
+
+      <button type="button" id="sidebarCollapse1" (click)="ToggleSlideMenu()" class="btn btn-info btn-menu1"
+      style="float: left; margin-right: 40px;">
+      <i class="fa fa-bars"></i>
+    </button>
+      <div class="navbar-header">
+        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#myNavbar">
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <img _ngcontent-qih-c57="" src='{{getImage()}}' style="width: 80px;height: 55px;" class="com_logo">
+        <h4 id="headerTitle" class="header_title">{{title}}</h4>
+      </div>
+
+      <div class="collapse navbar-collapse" id="myNavbar">
+        <ul class="nav navbar-nav navbar-right">
+          <li class="hidden-xs"><a data-toggle="tooltip" data-placement="ProjectPlus" title="ProjectPlus!"><i
+                class="fa fa-question-circle fa-lg" aria-hidden="true" (click)="onProjectPlusHelp()">P+</i></a></li>
+          <li class="hidden-xs"><a data-toggle="tooltip" data-placement="SalesCRMPlus" title="SalesCRMPlus!"><i
+                class="fa fa-question-circle fa-lg" aria-hidden="true" (click)="onSalesCRMHelp()">S+</i></a></li>
+          <li class="hidden-xs"><a data-toggle="tooltip" data-placement="IoTPlus" title="IoTPlus!"><i class="fa fa-question-circle fa-lg"
+                aria-hidden="true" (click)="onIotHelp()">I+</i></a></li>
+
+          <li><a><i class="fa fa-bell fa-lg" aria-hidden="true"></i><span class="badge notification1">2</span></a></li>
+          <li class="tiptext"><a><i class="fa fa-envelope fa-lg" aria-hidden="true"></i><span
+                class="badge notification2">{{totalMessageRecords}}</span></a>
+            <div class="description">
+              <div class="row descriptionParagraph">
+                <p style="padding-left: 30px;">
+                  You have {{totalMessageRecords}} new messages.
+                  <i class="fa fa-envelope fa-1x" aria-hidden="true"></i>
+                  <!--------------------------------- Populate application Messages ------------------------------------------------->
+                  <i class="fa fa-refresh fa-1x" (click)="populateApplicationMessage()" aria-hidden="true"></i>
+                </p>
+                <!-------------------------------- Method call mouseUP events Times ------------------------------------------------->
+                <div class="messageData" (scroll)="scrollHandler($event)">
+                  <div *ngFor='let obj of appMessages'>
+                    <input type="hidden" class="hiddenAppMessageIdClass" [value]="obj.Id" />
+                    <input type="hidden" class="hiddenAppIdClass" [value]="obj.AppId" />
+                    <input type="hidden" class="hiddenAppMessageRowVersionClass" [value]="obj.RowVersion" />
+                    <!--------------------------- Method call mouseUP events Times ------------------------------------------------->
+                    <div (mouseup)="onMouseUp($event)"> {{ obj.MessageBody }}</div>
+                    <hr class="new">
+                  </div>
+                </div>
+              </div>
+
+            </div>
+          </li>
+          <li><a class="profileResponsive">{{profileData()}}</a></li>
+          <li><a>{{getRoleNames()}}</a></li>
+          <li *ngIf="isUserLogged()==true"><a href="" (click)="signOut()" class="signOutResponsive"><span class="glyphicon glyphicon-user"></span>
+              Sign Out</a></li>
+          <li *ngIf="isUserLogged()==false"><a href="" (click)="signIn()"><span class="glyphicon glyphicon-user"></span>
+              Sign In</a></li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+</header>
+
+<section>
+  <div class="wrapper">
+    <!-- Sidebar  -->
+    <nav class="sidebar" *ngIf="isUserLogged()==true">
+      <div class="sidebar-header">
+      </div>
+
+      <ul *ngIf="(menuItem != null && menuItem.Children.length > 0)" class="list-unstyled components"
+        routerLinkActive="active">
+        <li class="active">
+          <a routerLink="/home" routerLinkActive="active" style="font-size: 13px;">
+            <i class="fa fa-line-chart"></i> Dashboard
+          </a>
+        </li>
+        <li class="">
+      <a routerLink="/csv-reader" >
+        <i class="fas fa-briefcase"></i> CSV
+      </a>
+    </li>
+        <!-- ROUTERLINK PATH DYNAMICALLY -->
+        <li *ngFor="let menu of menuItem.Children">
+          <a [href]="'#'+menu.Id" data-toggle="collapse" aria-expanded="false" style="font-size: 13px;">
+            <i [class]="menu.Icon"></i> {{ menu.Text }}
+          </a>
+          <!-- if required we can put this below *ngIf = "menu!=null" -->
+          <ul class="collapse list-unstyled" [id]="menu.Id">
+
+            <li *ngFor="let submenu of menu.Children">
+              <a [href]="'#'+submenu.Id" data-toggle="collapse" aria-expanded="false"><i class="submenu"
+                  [class]="submenu.Icon"></i>{{submenu.Text}}</a>
+
+              <ul *ngIf="(submenu != null && submenu.Children.length > 0)" class="collapse list-unstyled"
+                [id]="submenu.Id">
+                <li *ngFor="let submenu1 of submenu.Children">
+
+                  <a *ngIf="(submenu1!=null && submenu1.RouterPath != null)" class="subalign" [title]="submenu1.Text"
+                    [routerLink]="submenu1.RouterPath"><i class="submenu1"
+                      [class]="submenu1.Icon"></i>{{submenu1.Text}}</a>
+                </li>
+              </ul>
+
+            </li>
+          </ul>
+        </li>
+      </ul>
+    </nav>
+
+
+    <!-- Page Content  -->
+    <div id="content">
+      <router-outlet></router-outlet>
+    </div>
+  </div>
+</section>
+<footer style="white-space: nowrap;z-index:1;">
+  <p style="color: white;padding-left:50px;margin-top:-10px;">
+    <span> Copyright © {{getCurrentYear()}}, {{getHostName()}} (powered by Antronsys Technologies Pvt Ltd)</span><span
+      style="float: right;margin-right:5px;">Version: {{getVersion()}}</span>
+  </p>
+
+</footer>
+
+
+<footer class="site-footer" >
+      <div class="col-lg-12 col-md-12 col-sm-2">
+        <p style="color: white;padding-left:50px; margin-top:-8px!important;">
+          <span> Copyright © {{getCurrentYear()}}, {{getHostName()}} (powered by Antronsys Technologies Pvt
+            Ltd)</span><span style="float: right;margin-right:5px; margin-top: -14px">Version: {{getVersion()}}</span>
+        </p>
+      </div>
+</footer>

@@ -1,0 +1,156 @@
+<!---------------------- populate  Some Msg in topbar of pages -------------------------------------------------------------------->
+<div *ngIf="(isGridFormMsg == true)" class="alert alert-warning alert-dismissible fade in calibrationMsgIndex" style="padding-top: 0px!important;padding-bottom: 0px !important;margin-top: -12px!important;
+margin-bottom: 11px!important;font-size: 12px!important;">
+  <strong><i class="fa fa-star checked" aria-hidden="true"></i></strong> {{gridFormMsg}}
+</div>
+
+<!-- TITLE SHOW SUBMENU NAME   -->
+<!-- <h4 class="modal-title" style="color: #337ab7;">{{title}}</h4> -->
+
+<form [formGroup]="form" (submit)="submitForm()">
+  <!-- Hidden inputs for current page size and current onPageSizeChanged -->
+  <input type="hidden" id="hiddenPagesize" value="{{pageInfo1.pagesize}}">
+  <input type="hidden" id="hiddenCurrentPage" value="{{pageInfo1.currentPage}}">
+
+  <!-- THIS WILL LOOP ONLY THE SECTIONS  -->
+  <ng-template ngFor let-input [ngForOf]="formData.Sections">
+    <!-- THIS WILL LOOP ONLY THE SECTIONATTRIBUTES  -->
+    <div class="btn-group" *ngFor="let input1 of input.SectionAttributes">
+      <ng-container [ngSwitch]="input1.ControlType">
+        <ng-template [ngSwitchCase]="'button'">
+          <button [type]="input1.ValueType" class="btn btn-primary setWidth" [name]="input1.ControlName"
+            [id]="input1.ControlName" [title]="input1.Title">
+            <i id="hover" [class]="input1.CssClassName" aria-hidden="true"></i>
+          </button>
+        </ng-template>
+      </ng-container>
+    </div>
+  </ng-template>
+
+  <!------------------------ Excelbutton ------------------------------------->
+  <button type="button" style="float: right;margin-top: 5px;" title="export" class="btn btn-primary btnXLSX"
+    (click)="exportAsXLSX()">
+    <i class="fa fa-file-excel-o" aria-hidden="true"></i>
+  </button>
+  <br />
+
+  <div>
+    <!------------------------------------------- Search Data ----------------------------------------------------------->
+    <div class="col-xs-10 col-md-6 col-lg-4 search_list" >
+      <div class="input-group btnSearchResponsive">
+        <input class="form-control inputtexttosearch" id="searchIndexData" placeholder="Type to search..." [value]="searchValue"
+          (input)="searchValue=$event.target['value']" />
+        <div class="input-group-btn">
+          <button class="btn btn-primary btnsubmit" type="submit" (click)=searchRecords() title="Search">
+            <span class="glyphicon glyphicon-search"></span>
+          </button>
+          <!-------------------------------------------Clear Search Grid ----------------------------------------------------------->
+          <button type="button" style="margin-left: 2px;border-radius:5px;" class="btn btn-primary btnclear"
+            (click)=clearSearch() title="Clear"><i class="fa fa-remove hidden-lg removeIcon"></i>
+            <span class="button-text">Clear</span>
+          </button>
+
+        </div>
+      </div>
+    </div>
+
+
+    <!------------------------------------------------------------- Grid --------------------------------------------------->
+    <table #tableMain class="table table-condensed gridStyle edit-table no-more-tables">
+      <thead>
+        <tr>
+          <!---------------------------------------------------- Get Column Name ------------------------------------------>
+          <th *ngFor="let col of headerToPublish;index as i" (click)="sortRecords($event.target,col)">
+            {{col}}
+          </th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <!---------------------------------------------------- Get Column Data ------------------------------------------>
+      <tbody>
+        <tr *ngFor="let item of records">
+          <td *ngFor='let it of item.ColumnValues; index as i' [attr.data-index]="i"
+            [attr.data-title]="populateDataTitle(it.ColumnName)" >
+            <!-------------------------------------- set pipe for Date ------------------------------------------------>
+            <span *ngIf="(it.ColumnType != undefined && it.ColumnType == 'date')">{{it.ColumnData | customDate}}</span>
+            <!-------------------------------------- set pipe for DateTime ------------------------------------------------>
+            <span *ngIf="(it.ColumnType != undefined && it.ColumnType == 'dateTime')">{{it.ColumnData |
+              customDateTime}}</span>
+            <span *ngIf="(it.ColumnType == undefined && it.ColumnType != 'date')">{{populatetblColumnData(it.ColumnData)}}</span>
+          </td>
+          <!-------------------------------- Edit and Delete button for Grid ---------------------------------------->
+          <td data-title="Action">
+            <button title="Edit" class="btn btn-xs btn-radius center blue" (click)="navigateAddEdit(item.Id)"> <i
+                class="fa fa-edit" aria-hidden="true"></i></button>
+            &nbsp;
+            <button *ngIf="(splittedStringV != 'samplemethodstagereadings2')" title="Delete"
+              class="btn delete btn-xs btn-radius center blue" (click)="deleteItem(item.Id)"><i class="fa fa-trash"
+                aria-hidden="true"></i></button>
+            &nbsp;
+            <!-- /History button -->
+            <!-- <ng-template *ngIf="(isHistory == true)"> -->
+            <button *ngIf="(isHistory == true)" title="History" class="btn history btn-xs btn-radius center blue"
+              data-toggle="modal" (click)="HistoryItem(item.Id)" data-target="#HistoryId"><i class="fa fa-history"
+                aria-hidden="true"></i></button>
+            <!-- </ng-template> -->
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <!----------------------------------------------------- GridEnd    -------------------------------------------------------->
+    <!--------------------------------------------------- pagination  -------------------------------------------------------->
+    <div style="text-align: center;white-space: nowrap;" class="paginationResponsive">
+      <select (change)="onPageSizeChanged()" id="selectPage-size">
+        <option value="10">10</option>
+        <option value="15">15</option>
+        <option value="20">20</option>
+        <option value="25">25</option>
+        <option value="30">30</option>
+        <option value="35">35</option>
+        <option value="40">40</option>
+        <option value="45">45</option>
+        <option value="50">50</option>
+      </select>
+      <!-------------------------------- populate total no of Record in grid --------------------------------------------------->
+      <label id="lblRecordsInfo" style="margin-right: 10px;"></label>
+      <!----------------------------- First,Prev,Last,Next pagination ---------------------------------------------------------->
+      <button id="btnFirst" class="btn btn-default btn-circle" (click)="first()" aria-label="First"><i
+          style="color:#337ab7" class="fa fa-angle-double-left" aria-hidden="true"></i></button>
+      <button id="btnPrev" class="btn btn-default btn-circle" (click)="prev()" aria-label="Previous"><i
+          style="color:#337ab7" class="fa fa-angle-left" aria-hidden="true"></i></button>
+      <button id="btnNext" class="btn btn-default btn-circle" (click)="next()" aria-label="Next"><i
+          style="color:#337ab7" class="fa fa-angle-right" aria-hidden="true"></i></button>
+      <button id="btnLast" class="btn btn-default btn-circle" (click)="last()" aria-label="Next"><i
+          style="color:#337ab7" class="fa fa-angle-double-right" aria-hidden="true"></i></button>
+    </div>
+  </div>
+  <!----------------------------------------------- End Pagination ---------------------------------------------------------->
+</form>
+
+<!-------------------------------------- Populate History Modal In Index Page --------------------------------------------------->
+<div class="container">
+  <div id="HistoryId" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+      <!-- Modal content-->
+      <div class="modal-content" id="contentSize">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal">&times;</button>
+          <h4 class="modal-title">History For {{menu}} </h4>
+        </div>
+        <div class="modal-body" id="contentSizeForBody">
+          <div class="container">
+            <div class="row">
+              <div class="col-lg-12">
+                <div class="panel-group" id="accordionId" role="tablist" aria-multiselectable="true">
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

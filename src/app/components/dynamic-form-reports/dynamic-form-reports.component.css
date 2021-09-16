@@ -1,0 +1,511 @@
+form {
+    margin-top: -38px !important;
+  }
+  
+  .modal-content {
+    border-top: solid #0bd6d6;
+    /* height: 89.7vh !important; */
+    padding: 0 !important;
+    border-radius: 0 !important;
+    top: -15px;
+  }
+  ::-webkit-calendar-picker-indicator {
+    color: rgba(0, 0, 0, 0);
+    opacity: 1;
+    background-image: url('data:image/svg+xml;charset=utf8,%3Csvg fill="%23000" fill-opacity=".54" height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg"%3E%3Cpath d="M19 3h-1V1h-2v2H8V1H6v2H5c-1.11 0-1.99.9-1.99 2L3 19c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V8h14v11zM7 10h5v5H7z"/%3E%3Cpath d="M0 0h24v24H0z" fill="none"/%3E%3C/svg%3E');
+    width: 14px;
+    height: 18px;
+    cursor: pointer;
+    border-radius: 50%;
+    margin-left: 0.5rem;
+  }
+  ::-webkit-calendar-picker-indicator:hover {
+    -webkit-box-shadow: 0 0 0 4px rgba(0, 0, 0, 0.04);
+    box-shadow: 0 0 0 4px rgba(0, 0, 0, 0.04);
+  }
+  
+  .checkboxPosition {
+    width: 30px;
+    margin-top: 104px;
+    margin-left: -30px;
+  }
+  .checkboxSize {
+    width: 20px !important;
+    height: 20px;
+  }
+  table th {
+    background-color: #179dac;
+    text-align: left;
+    color: white;
+    height: 35px;
+  }
+  th,
+  td {
+    padding-left: 10px;
+  }
+  td {
+    height: 35px;
+  }
+  
+  tr:nth-child(even) {
+    background: rgb(245, 245, 245);
+  }
+  
+  tr:nth-child(odd) {
+    background: rgb(205, 205, 207);
+  }
+  
+  .colHide {
+    display: none;
+  }
+  .badge1 {
+    height: 12px;
+    width: 20px;
+    border-radius: 25%;
+    display: inline-block;
+    background: maroon;
+  }
+  .badge2 {
+    height: 12px;
+    width: 20px;
+    border-radius: 25%;
+    display: inline-block;
+    background: green;
+  }
+  .badge3 {
+    height: 12px;
+    width: 20px;
+    border-radius: 25%;
+    display: inline-block;
+    background: yellow;
+  }
+  .badge4 {
+    height: 12px;
+    width: 20px;
+    border-radius: 25%;
+    display: inline-block;
+    background: orange;
+  }
+  .badge5 {
+    height: 12px;
+    width: 20px;
+    border-radius: 25%;
+    display: inline-block;
+    background: navy;
+  }
+  .title1 {
+    width: 27.333333%;
+  }
+  .title2 {
+    width: 14.666667%;
+  }
+  .title3 {
+    width: 6.333333%;
+  }
+  .title4 {
+    width: 9.333333%;
+  }
+  #staffNameId{
+    font-weight: bold;
+    margin-left: 15px;
+  }
+  .btnReport {
+    background-color: #2b8bce;
+    color: white;
+    border-color: #2b8bce;
+    height: 30px;
+    border-radius: 5px;
+  }
+  .btnAllocate {
+    background-color: #2b8bce;
+    color: white;
+    border-color: #2b8bce;
+    position: fixed;
+    height: 30px;
+    border-radius: 5px;
+  }
+  
+  #selectPage-size {
+    margin-right: 50px;
+    background: white;
+    border-radius: 5px;
+    border-color: #337ab7;
+    width: 45px;
+    height: 30px;
+  }
+  
+  .btnForecastReports {
+    background-color: #337ab7;
+    color: white;
+    border-color: #337ab7;
+    height: 30px;
+    border-radius: 5px;
+  }
+  .btnChecked {
+    background-color: #2b8bce;
+    color: white;
+    border-color: #2b8bce;
+    position: fixed;
+  }
+  .btnBlockedStaff {
+    background-color: #eb110d;
+    color: white;
+    border-color: #eb110d;
+    height: 30px;
+    border-radius: 5px;
+  }
+  .btnAssign {
+    background-color: #2b8bce;
+    color: white;
+    border-color: #2b8bce;
+    position: fixed;
+  }
+  .btnAssignForProjectStaff {
+    background-color: #2b8bce;
+    color: white;
+    border-color: #2b8bce;
+    position: fixed;
+    height: 30px;
+    border-radius: 5px;
+    margin-top: 14px;
+  }
+  
+  .btnPopulateForProjectStaff {
+    background-color: #2b8bce;
+    color: white;
+    border-color: #2b8bce;
+    position: fixed;
+    height: 30px;
+    border-radius: 5px;
+  }
+  .btnMarkCheckedForSelect {
+    background-color: #2b8bce;
+    color: white;
+    border-color: #2b8bce;
+    position: fixed;
+    height: 30px;
+    border-radius: 5px;
+    border-bottom-width: 1px;
+    margin-top: -20px;
+    /* margin-left: 97px;
+    margin-top: -25px; */
+  }
+  .btnSearcStaff {
+    background-color: #2b8bce;
+    color: white;
+    border-color: #2b8bce;
+    position: fixed;
+    height: 30px;
+    border-radius: 5px;
+  }
+  
+  .dateSize {
+    width: 165px;
+  }
+  label {
+    color: #1270b3;
+  }
+  .span1 {
+    background: #ffbf00;
+    color: white;
+    border-color: #ffbf00;
+  }
+  .span2 {
+    background: #296848;
+    color: white;
+    border-color: #296848;
+  }
+  .span3 {
+    background: yellow;
+    color: rgb(0, 0, 0);
+    border-color: yellow;
+  }
+  .span4 {
+    background: #2d87c7;
+    color: white;
+    border-color: #2d87c7;
+  }
+  .span5 {
+    background: #8f9bf2;
+    color: rgb(0, 0, 0);
+    border-color: #8f9bf2;
+  }
+  
+  #reportTable {
+    max-height: 10px;
+  }
+  .btn-circle {
+    width: 40px;
+    height: 30px;
+    text-align: center;
+    font-size: 18px;
+    line-height: 1.42;
+    border-radius: 5px;
+    background-color: #fdfdfd;
+    color: rgb(2, 2, 2);
+    padding-top: 2px;
+    border-color: #337ab7;
+  }
+  .forProjectstaff {
+    width: 10.666667%;
+  }
+  @media screen and (min-width: 150px) and (max-width : 780px)
+{
+  .forProjectstaff {
+   width: 95.666667%;
+  }
+}
+@media screen and (min-width: 150px) and (max-width : 780px)
+{
+   .col-xs-2 {
+  width: 39.666667%;
+} 
+}
+
+  .forLiveProjectReport{
+    width: 15.666667%;
+  }
+  .modal-content {
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
+    padding-bottom: 288px;
+  }
+  
+  #summary {
+    margin-left: 10px;
+  }
+  
+  .divInfo {
+    font-size: 9px;
+  }
+  #popup {
+    display: none;
+    border: 1px solid black;
+  }
+  
+  .cell-which-triggers-popup {
+    cursor: pointer;
+  }
+  /* 
+  .cell-which-triggers-popup:hover{
+    background-color: yellow;    
+  } */
+  
+  .modal1 {
+    display: none; /* Hidden by default */
+    position: absolute; /* Stay in place */
+    margin-top: -215px;
+    width: 100%; /* Full width */
+    height: 1500px;
+    background-color: rgb(0, 0, 0); /* Fallback color */
+    background-color: rgba(0, 0, 0, 0.4); /* Black w/ opacity */
+  }
+  
+  /* Modal Content/Box */
+  .content1 {
+    background-color: #fefefe;
+    margin: 15% auto; /* 15% from the top and centered */
+    padding: 20px;
+    border: 1px solid #888;
+    width: 45%;
+    max-height: 50%;
+  }
+  
+  .content2 {
+    background-color: #fefefe;
+      margin: 15% auto;
+      padding: 20px;
+      border: 1px solid #888;
+      width: 80%;
+      max-height: 50%;
+      margin-left: 280px;
+  }
+  /* The Close Button */
+  #close {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+  }
+  
+  #close:hover,
+  #close:focus {
+    color: black;
+    text-decoration: none;
+    cursor: pointer;
+  }
+  
+  /* The Close Button */
+  #chart-close {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+  }
+  
+  #chart-close:hover,
+  #chart-close:focus {
+    color: black;
+    text-decoration: none;
+    cursor: pointer;
+  }
+  
+  #closeHistoryModal {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+  }
+  
+  #closeHistoryModal:hover,
+  #closeHistoryModal:focus {
+    color: black;
+    text-decoration: none;
+    cursor: pointer;
+  }
+  
+  #closeLogModal {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+  }
+  .downloadArrowClass {
+    width: 30px;
+    color: red;
+    border-radius: 5px;
+    border: 2px solid red;
+    text-align: center;
+    margin-top: 2px;
+    font-weight: bold;
+    font-size: 25px;
+    margin-left: 10px;
+  }
+  table.gridStyle tbody {
+    display: block;
+    height: 40vh;
+    overflow-y: scroll;
+    width: 100%;
+  }
+
+  .setMargin{
+    margin-top: 25PX
+  }
+  @media screen and (min-width: 150px) and (max-width : 780px)
+{
+  table.gridStyle tbody {
+    display: block;
+    height: 0vh;
+    overflow-y: scroll;
+    width: 100%;
+  }
+  .modal-body {
+    position: relative;
+    padding: 0px !important;
+}
+
+.btnMarkCheckedForSelect {
+  background-color: #2b8bce;
+  color: white;
+  border-color: #2b8bce;
+  position: fixed;
+  height: 30px;
+  border-radius: 5px;
+  border-bottom-width: 1px;
+  margin-left: -3px;
+  margin-top: -1px;
+}
+.setMargin{
+  margin-top: 15PX;
+  margin-left: 10px
+}
+/* .panel-bodyData{
+  height: 250px
+} */
+}
+  
+  table.gridStyle thead,
+  table.gridStyle tbody tr {
+    display: table;
+    width: 100%;
+    table-layout: fixed;
+    word-wrap: break-word;
+  }
+  .theadHide {
+    display: none;
+  }
+  .btnAssignmentReport {
+    background-color: #2b8bce;
+    color: white;
+    border-color: #2b8bce;
+    height: 30px;
+    border-radius: 5px;
+  }
+  #accordionId1{
+  width: 1200px;
+  margin-left: -50px;
+  }
+  
+  .searchtxt{
+    width: 136px;
+  }
+  .currentDate{
+    width: 14.666667% !important;
+  }
+  
+  .btnReportProcess{
+    background-color: #337ab7;
+    color: white;
+    border-color: #337ab7;
+    height: 30px;
+    border-radius: 5px;
+    margin-top: 5px;
+    margin-left: -445px;
+  }
+  .btnChart{
+    background-color: #337ab7;
+    color: white;
+    border-color: #337ab7;
+    height: 30px;
+    border-radius: 5px;
+    margin-bottom: 5px;
+    margin-left: -200px;
+  }
+
+
+  .panel-title {
+    position: relative;
+  }
+    
+  .panel-title::after {
+    content: "\f107";
+    color: #333;
+    top: -2px;
+    right: 0px;
+    position: absolute;
+    font-family: "FontAwesome"
+  }
+  
+  .panel-title[aria-expanded="true"]::after {
+    content: "\f106";
+  }
+  
+  /*
+   * Added 12-27-20 to showcase full title clickthrough
+   */
+  
+  .panel-heading-full.panel-heading {
+    padding: 0;
+  }
+  
+  .panel-heading-full .panel-title {
+    padding: 10px 15px;
+  }
+  
+  .panel-heading-full .panel-title::after {
+    top: 10px;
+    right: 15px;
+  }
+
+  .panel-bodyData{
+    height: 400px !important;;
+  }

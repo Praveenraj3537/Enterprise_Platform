@@ -1,0 +1,70 @@
+.form-control {
+    display: block;
+    width: 100%;
+    height: 34px;
+    padding: 6px 12px;
+    font-size: 14px;
+    line-height: 1.42857143;
+    color: #555;
+    background-color: #fff;
+    background-image: none;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+  }
+  
+  .modal-content {
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
+    height: 900px;
+  }
+  
+  .modal-content {
+    border-top: solid #0bd6d6;
+    height: 89.7vh !important;
+    padding: 0 !important;
+    border-radius: 0 !important;
+    margin-top: 7px;
+    top: -15px;
+  }
+  .section {
+    background-color: #179dac !important;
+    height: 6px !important;
+    color: white;
+    text-align: center;
+    text-transform: uppercase;
+    padding-bottom: 25px;
+    padding-top: 5px;
+    cursor: pointer;
+  }
+  .modal-header {
+    min-height: 10.43px;
+    padding: 15px;
+    border-bottom: 1px solid #e5e5e5;
+    margin-top: -18px !important;
+    margin-bottom: -12px !important;
+    padding-bottom: 0px !important;
+  }
+  
+  .populatetblbtn {
+    margin-bottom: 5px;
+    margin-top: 5px;
+    float: right;
+    padding-left: 8px;
+  }
+  
+  .timeSheet-content {
+    width: 40%;
+    max-height: 500px;
+    margin-left: 500px;
+    margin-top: 150px;
+  }
+  
+  #contentSizeForBody {
+    height: 200px !important;
+  }
+  .modal-title {
+    margin-bottom: -13px;
+  }
+  .setsize {
+    padding: 60px !important;
+  }
+  

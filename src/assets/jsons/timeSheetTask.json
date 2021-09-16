@@ -1,0 +1,23 @@
+{
+    "DataCollection":[
+        {
+            "Date": "2020-11-01",
+            "Task":"Task1",
+            "Hours":4.00
+        },
+        {
+            "Date": "2020-11-02",
+            "Task":"Task2",
+            "Hours":6.00
+
+        },
+        {
+            "Date": "2020-11-02",
+            "Task":"Task3",
+            "Hours":6.00
+
+        }
+
+    ]
+
+}

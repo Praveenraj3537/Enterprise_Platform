@@ -1,0 +1,430 @@
+
+<div class="modal-content">
+    <div class="modal-body">
+      <form [formGroup]="form" (submit)="submitForm()">
+
+        <div class="panel panel-default" style="margin-top:40px;">
+          <div class="panel-heading">
+            <h2 class="panel-title" data-toggle="collapse" data-target="#collapseOne">Click Me</h2>
+          </div>
+          
+          <div id="collapseOne" class="panel-collapse" aria-expanded="true">
+            <div class="panel-bodyData">
+              <ng-template ngFor let-input [ngForOf]="formData.Sections">
+                <!------------------------------------------------ THIS WILL LOOP ONLY THE SECTIONS  ----------------------------------->
+                <div class="btn-group" *ngFor="let input1 of input.SectionAttributes">
+                  <ng-container [ngSwitch]="input1.ControlType">
+        
+                    <!--------------------------------------------- check Type Button --------------------------------------------------->
+                    <ng-template [ngSwitchCase]="'button'">
+                      <button style="width:55px;" [type]="input1.ValueType" class="btn" [name]="input1.ControlName"
+                        [id]="input1.ControlName" [title]="input1.Title">
+                        <i id="hover" [class]="input1.CssClassName" aria-hidden="true"></i>
+                      </button>
+                    </ng-template>
+                    <!----------------------------------- check Type Select----------------------------------------------------- -->
+                    <ng-template [ngSwitchCase]="'select'">
+                      <div class="form-group">
+                        <label [for]="input1.ControlName"> {{input1.LabelName}}</label>
+                        <select [formControlName]="input1.ControlName" [name]="input1.ControlName" [class]="input1.CssClassName"
+                          [id]="input1.ControlName">
+                        </select>
+                      </div>
+                    </ng-template>
+                  </ng-container>
+                </div>
+        
+                <!------------------------------- THIS WILL LOOP OVER SUB SECTIONS --------------------------------------------------------->
+                <div *ngFor="let subsection of input.SubSections" style="margin-top: 45PX;">
+                  <div *ngFor="let input1 of subsection.SectionAttributes">
+                    <ng-container [ngSwitch]="input1.ControlType">
+                      <!--------------Subsection/SectionAttributes.Controltype checked----------------------------------->
+                      <!-- check Type Button -->
+                      <ng-template [ngSwitchCase]="'button'">
+                        <div class="col-xs-2 col-sm-2 col-md-2 col-lg-2 setMargin">
+                          <input [type]="input1.ValueType" [name]="input1.ControlName" [class]="input1.CssClassName"
+                            [id]="input1.ControlName" [value]="input1.LabelName" />
+                        </div>
+                      </ng-template>
+                      <!-- checked Type Text -->
+                      <ng-template [ngSwitchCase]="'text'">
+                        <div [class]="getUpdateClass(input1.CssClassName)">
+                          <label [for]="input1.ControlName"> {{input1.LabelName}}</label>
+                          <input [formControlName]="input1.ControlName" [type]="input1.ValueType" [name]="input1.ControlName"
+                            class="form-control" [id]="input1.ControlName"
+                            [value]="input1.CurrentValue ? input1.CurrentValue  : ''" />
+                        </div>
+                      </ng-template>
+                      <!-- check Type Number -->
+                      <ng-template [ngSwitchCase]="'number'">
+                        <div class="col-sm-3">
+                          <label [for]="input1.ControlName"> {{input1.LabelName}}</label>
+                          <input [formControlName]="input1.ControlName" [type]="input1.ValueType" [name]="input1.ControlName"
+                            class="form-control" [id]="input1.ControlName"
+                            [value]="input1.CurrentValue ? input1.CurrentValue  : ''" />
+                        </div>
+                      </ng-template>
+                      <!-- check Type Email -->
+                      <ng-template [ngSwitchCase]="'email'">
+                        <div class="col-sm-3">
+                          <label [for]="input1.ControlName"> {{input1.LabelName}}</label>
+                          <input [formControlName]="input1.ControlName" [type]="input1.ValueType" [name]="input1.ControlName"
+                            class="form-control" [id]="input1.ControlName"
+                            [value]="input1.CurrentValue ? input1.CurrentValue  : ''" />
+                        </div>
+                      </ng-template>
+                      <!-- checked Type Date -->
+                      <ng-template [ngSwitchCase]="'date'">
+                        <div class="col-sm-2 currentDate">
+                          <label [for]="input1.ControlName"> {{input1.LabelName}}</label>
+                          <input [formControlName]="input1.ControlName" [type]="input1.ValueType" [name]="input1.ControlName"
+                            [class]="input1.CssClassName" [id]="input1.ControlName"
+                            [value]="input1.CurrentValue ? input1.CurrentValue  : ''" />
+                        </div>
+                      </ng-template>
+                      <!-- checked Type TypoMultiSelect -->
+                      <ng-template [ngSwitchCase]="'typomultiselect'">
+                        <div class="col-sm-2">
+                          <label [for]="input1.ControlName"> {{getProperLabelName(input1.LabelName)}} </label>
+                          <input [type]="input1.ValueType" [id]="input1.ControlName" list="browsers" class="form-control"
+                            autocomplete="off" required />
+                          <div [class]="getClassNameForDiv(input1.ControlName,'_DivContainer')">
+                          </div>
+                          <ul [class]="getClassNameForULHelper(input1.ControlName,'_ULHelper')" style="display: none;">
+                          </ul>
+                        </div>
+                      </ng-template>
+                      <!-- checked Type TypoSelect -->
+        
+                      <ng-template [ngSwitchCase]="'typoselect'">
+                        <div class="col-sm-2">
+                          <label [for]="input1.ControlName"> {{getProperLabelName(input1.LabelName)}} </label>
+                          <input [type]="input1.ValueType" [id]="input1.ControlName" list="browsers" class="form-control"
+                            autocomplete="off" required />
+        
+                          <ul [class]="getClassNameForULHelper(input1.ControlName,'_ULHelper')" style="display: none;">
+                          </ul>
+                        </div>
+                      </ng-template>
+        
+                      <!-- check Type SelectMultiples -->
+                      <ng-template [ngSwitchCase]="'selectMultiple'">
+                        <div class="col-sm-2">
+                          <div style="display:inline;white-space: nowrap;">
+                            <label [for]="input1.ControlName"> {{input1.LabelName}}</label>
+                            <i *ngIf="(input1.IncludeRefresh != null && input1.IncludeRefresh)" class="fa fa-refresh"
+                              style="font-size:10px;float: right;cursor: pointer;margin-top: 8px;margin-right: 2px;"
+                              tooltip="Refreshes [{{input1.LabelName}}]" [id]="getIdForRefresh(input1.ControlName)"></i>
+                          </div>
+                          <select multiple [formControlName]="input1.ControlName" [name]="input1.ControlName"
+                            class="form-control" [id]="input1.ControlName" [selectedIndex]="input1.CurrentValue">
+                          </select>
+                        </div>
+                      </ng-template>
+                      <!-- check Type CheckBOX -->
+                      <ng-template [ngSwitchCase]="'checkbox'">
+                        <div class="col-sm-1 checkboxPosition">
+                          <label [for]="input1.ControlName"> {{input1.LabelName}}</label>
+                          <input [formControlName]="input1.ControlName" [type]="input1.ValueType" [name]="input1.ControlName"
+                            class="checkboxSize" [id]="input1.ControlName"
+                            [value]="input1.CurrentValue ? input1.CurrentValue  : ''" />
+                        </div>
+                      </ng-template>
+                      <!-- check Type Select -->
+                      <ng-template [ngSwitchCase]="'select'">
+                        <div class="col-sm-2 forProjectstaff">
+                          <label [for]="input1.ControlName"> {{input1.LabelName}}</label>
+                          <select [formControlName]="input1.ControlName" [name]="input1.ControlName" class="form-control"
+                            [id]="input1.ControlName" [selectedIndex]="input1.CurrentValue">
+                          </select>
+                          <!-- Add refresh button for dropdowns -->
+                          <div style="display:inline;white-space: nowrap;">
+                            <i *ngIf="(input1.IncludeRefresh != null && input1.IncludeRefresh)" class="fa fa-refresh"
+                              style="font-size:10px;float: right;cursor: pointer;margin-top: 8px;margin-right: 2px;"
+                              [id]="getIdForRefresh(input1.ControlName)">
+                            </i>
+                          </div>
+                          <div [id]="getAdditionalInfoIdValue(input1.ControlName)"
+                            *ngIf="(input1.IncludeAdditionalInfo != null && input1.IncludeAdditionalInfo)" class="divInfo">
+                          </div>
+                        </div>
+                      </ng-template>
+                      <ng-template [ngSwitchCase]="'span'">
+                        <div style="margin-top:5px;" class="col-sm-4">
+                          <span [class]="input1.CssClassName">{{input1.LabelName}}</span>
+                        </div>
+                      </ng-template>
+                    </ng-container>
+                  </div>
+                </div>
+              </ng-template>
+            </div>
+          </div>
+        </div>
+        <br />
+        <div style="margin-top: -28px;">
+          <section>
+            <div id='summary'>
+            </div>
+            <div id='liveProject'>
+            </div>
+            <!-------------------------------------- populate Report TABLE  GET CLASS NAME DYNAMICALLY USING JSON----------------------------------------->
+            <table [class]="getClass()" id="sampleReportTable" *ngIf='(splittedStringV == "samplereport")'>
+              <thead id="headData">
+                <th *ngFor="let col of reportService.sampleTablecolumns">
+                  {{col}}
+                </th>
+              </thead>
+              <tbody>
+                <tr>
+                  <td *ngFor="let item of reportService.sampleTableRecords ;let a = index">
+                    {{item}}
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+  
+            <table #tableMain [class]="getClass()" id="reportTable" *ngIf='(splittedStringV != "samplereport")'>
+              <thead>
+                <th *ngFor="let col of reportService.columns" [class]="setCssClass(col['ColumnName'])">
+                  <!-- changePascalCaseToSpace method Add Space in ColumnName -->
+                  {{reportService.populateHeader(col['ColumnName'],col['ColumnHeader'])}}
+                </th>
+              </thead>
+              <tbody>
+                <tr *ngFor="let item of reportService.records ;let a = index">
+                  <td *ngFor='let it of item.ColumnValues; index as i' [attr.data-index]="i"
+                    [class]="setCssClassForColData(it.ColumnName)">
+                    <ng-container [ngSwitch]="it.ColumnType">
+                      <!------------------------------ check columnType hiddeen for table ------------------------------------>
+                      <ng-template [ngSwitchCase]="'hidden'">
+                        <input type="hidden" [class]="updateClassName(it.ColumnName, it.CssClassName)"
+                          [value]="it.ColumnData" />
+                      </ng-template>
+                      <!------------------------------ check columnType checkbox for table ------------------------------------>
+                      <ng-template [ngSwitchCase]="'checkbox'">
+                        <input type="checkbox" style="zoom:1.5;" [class]="it.ColumnName" />
+                      </ng-template>
+                      <!------------------------------ check columnType date for table ------------------------------------>
+                      <ng-template [ngSwitchCase]="'date'">
+                        <input type="date" [class]="it.ColumnName" [value]=getDateValue(it.ColumnData)
+                          style="width: 112px;">
+                      </ng-template>
+                      <!------------------------------ check columnType mainObject for table ------------------------------------>
+                      <ng-template [ngSwitchCase]="'mainObject'">
+                        <input type="hidden" class="mainObjectClass" [value]=mainObjectData(it.ColumnData)>
+                      </ng-template>
+                      <!------------------------------ check columnType button for table ------------------------------------>
+                      <ng-template [ngSwitchCase]="'button'">
+                        <input type="button" [class]="it.CssClassName" [value]=it.ColumnName
+                          (click)="printTable($event,it.ColumnName)" data-toggle="modal" data-target="#myModal3">
+                      </ng-template>
+                      <!------------------------------ check columnType selectbox for table ------------------------------------>
+                      <ng-template [ngSwitchCase]="'selectbox'">
+                        <select [class]="it.ColumnName">
+                          <!-- <option *ngFor="let col of getcolumnCollection(it.KeyValues, it.ColumnName, item.ColumnValues)" -->
+                          <option *ngFor="let col of it.KeyValues" Key="col.Key" [selected]="it.ColumnData == col.Value">
+                            {{col.Value}}</option>
+                        </select>
+                      </ng-template>
+                      <!------------------------------ check columnType hyperlink for table ------------------------------------>
+                      <ng-template [ngSwitchCase]="'hyperlink'">
+                        <a class="cell-which-triggers-popup"><span [class]="it.ColumnName"
+                            (click)="trigger($event,it.ColumnName,it.ColumnData)">{{it.ColumnData}}</span>
+                        </a>
+                      </ng-template>
+  
+                      <!------------------------------ check columnType span for table ------------------------------------>
+                      <ng-template [ngSwitchCase]="'span'">
+                        <span [class]="it.ColumnName">{{it.ColumnData}}</span>
+                      </ng-template>
+                      <!------------------------------ check columnType resumeSpan for table ------------------------------------>
+                      <ng-template [ngSwitchCase]="'resumeSpan'">
+                        <input type="hidden" [class]="it.ColumnName" [value]="it.ColumnData" />
+                        <a [href]="downloadResume(it.ColumnData)" class="cell-which-triggers-popup downloadArrowClass"
+                          title="download Resume">↓</a>
+                      </ng-template>
+                      <!------------------------------ check columnType spanLimited for table ------------------------------------>
+                      <ng-template [ngSwitchCase]="'spanLimited'">
+  
+                        <span [class]="it.ColumnName">{{showLimitedText(it.ColumnData)}}</span>
+  
+                      </ng-template>
+                      <!------------------------------ check  ngSwitchDefault for table ------------------------------------>
+                      <ng-template ngSwitchDefault>
+                        <span [class]="it.ColumnName">{{it.ColumnData}}</span>
+                      </ng-template>
+                    </ng-container>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+            <!-------------------------Check Pagignation-------------------------------------------------------------------->
+            <div style="text-align: center;">
+              <ng-template [ngIf]="(isPaginationEnabled != null && isPaginationEnabled == true)">
+                <select (change)="onPageSizeChanged(null)" id="selectPage-size">
+                  <!-- <option value="5">5</option> -->
+                  <option value="10">10</option>
+                  <option value="15">15</option>
+                  <option value="20">20</option>
+                  <option value="25">25</option>
+                  <option value="30">30</option>
+                  <option value="35">35</option>
+                  <option value="40">40</option>
+                  <option value="45">45</option>
+                  <option value="50">50</option>
+                </select>
+              </ng-template>
+              <label id="lblRecordsInfo" style="margin-right: 10px;"></label>
+              <button id="btnFirst" class="btn btn-default btn-circle" (click)="first(null)" aria-label="First"><i
+                  style="color:#337ab7" class="fa fa-angle-double-left" aria-hidden="true"></i></button>
+              <button id="btnPrev" class="btn btn-default btn-circle" (click)="prev(null)" aria-label="Previous"><i
+                  style="color:#337ab7" class="fa fa-angle-left" aria-hidden="true"></i></button>
+              <button id="btnNext" class="btn btn-default btn-circle" (click)="next(null)" aria-label="Next"><i
+                  style="color:#337ab7" class="fa fa-angle-right" aria-hidden="true"></i></button>
+              <button id="btnLast" class="btn btn-default btn-circle" (click)="last(null)" aria-label="Next"><i
+                  style="color:#337ab7" class="fa fa-angle-double-right" aria-hidden="true"></i></button>
+            </div>
+          </section>
+        </div>
+      </form>
+    </div>
+  </div>
+  
+  <!--------------------------------------------- Date  Modal For Report Table  ------------------------------------------>
+  <div id="myModal" class="modal modal1">
+    <div class="modal-content content1" id="mydiv">
+      <div class="drag">
+        <div class="modal-header">
+          <span id="close">&times;</span>
+          <h5 class="modal-title">
+            <div class="row">
+              <p class="col-sm-4 title1">Staff Availability between </p>
+              <p id="startDateId" class="col-sm-2 title2"></p>
+              <p class="col-sm-1 title3">and</p>
+              <p id="endDateId" class="col-sm-2"></p>
+              <p class="col-sm-1 title4">StaffName:</p>
+              <p id="staffNameId" class="col-sm-2"></p>
+            </div>
+            <div>
+              <ul class="list-inline">
+                <li><span class="badge1"></span>&nbsp;Blocked Hours</li>
+                <li><span class="badge2"></span>&nbsp;Free Hours</li>
+                <li><span class="badge3"></span>&nbsp;Holiday Hours </li>
+                <li><span class="badge4"></span>&nbsp;Leave Hours</li>
+                <li><span class="badge5"></span>&nbsp;Project Hours</li>
+              </ul>
+            </div>
+          </h5>
+        </div>
+        <div class="modal-body">
+  
+          <full-calendar id="calendar" #calendar [options]="calendarOptions"></full-calendar>
+        </div>
+        <div class="modal-footer">
+  
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  
+  <!--History  Modal content -->
+  <div id="myHistoryModal" class="modal modal1">
+    <div class="modal-content content2" id="myHistoryDiv">
+      <div class="drag">
+        <div class="modal-header">
+          <span id="closeHistoryModal">&times;</span>
+          <h5 class="modal-title">
+            <h3 class="modal-title">History</h3>
+          </h5>
+        </div>
+        <div class="modal-body" id="contentSizeForBody">
+          <div class="container">
+            <div class="row">
+              <div class="col-lg-12">
+                <div class="panel-group" id="accordionId" role="tablist" aria-multiselectable="true">
+  
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+  
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <!--Log Report  Modal content -->
+  <div id="myLogReportModal1" class="modal modal1">
+    <div class="modal-content content2" id="myLogDiv">
+      <div class="drag">
+        <div class="modal-header">
+          <span id="closeLogModal">&times;</span>
+          <h5 class="modal-title">
+            <h3 class="modal-title">Log Report</h3>
+          </h5>
+        </div>
+        <div class="modal-body" id="contentSizeForBody1" style="height: 550px;">
+          <div class="container">
+            <div class="row">
+              <div class="col-lg-12">
+                <div class="panel-group" id="accordionId1" role="tablist" aria-multiselectable="true">
+  
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  
+  <!-----------------------------    populate modal for Print Option ---------------------------->
+  <div class="modal fade" id="myModal3" role="dialog">
+    <div class="modal-dialog" style="width: 70% !important;">
+  
+      <!-- Modal content-->
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal">&times;</button>
+          <!-- <h3 class="modal-title">{{title}}</h3> -->
+        </div>
+        <div class="modal-body" id="currentDiv">
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-primary" (click)="printRecord()">Print</button>
+          <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        </div>
+      </div>
+  
+    </div>
+  </div>
+  
+  
+  <div id="chart-modal" class="modal modal1">
+    <div class="modal-content content1" id="mydiv">
+      <div class="drag">
+        <div class="modal-header">
+  
+          <span id="chart-close">&times;</span>
+          <h5 class="modal-title">
+            MultiLine Chart
+          </h5>
+        </div>
+        <div class="modal-body">
+          <div id="chartContainer" style="height: 500px; width: 100%;">
+          </div>
+        </div>
+        <div class="modal-footer">
+  
+        </div>
+      </div>
+    </div>
+  </div>
+

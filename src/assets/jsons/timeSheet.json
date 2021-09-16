@@ -1,0 +1,21 @@
+{
+    "DataCollection":[
+        {
+            "ContextDay": "2020-10-01",
+            "StaffHours":7
+
+        },
+        {
+            "ContextDay": "2020-10-06",
+            "ApprovalHours":1
+
+        },
+        {
+            "ContextDay": "2020-10-02",
+            "CorrectionHours":10
+
+        }
+
+    ]
+
+}

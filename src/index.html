@@ -1,0 +1,964 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Integrated Enterprise</title>
+  <base href="/">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <!-- <link rel="icon" type="image/x-icon" href="http://www.antronsys.com/favicon.ico"> -->
+  <script>
+    //This method use for multiselect option show times
+    function setValueForDivControl(source, current, idValue, idModelPropName, contextualObjectLi, contextualObject) {
+      let div_temp = $(contextualObjectLi).parent().parent().find('.divContainer');
+      console.log($(contextualObjectLi).parent().parent().find('.divContainer')); // get parent div using find()
+      let source_temp = document.getElementById(source.trim());
+      if (source_temp != null) {
+        //create child div 
+        let div_to_add = $('<div class="multiDiv" tag="' + idValue + '">' + current + '<span class="closeSkills" onclick="removeChildDiv(this);">&times</span></div>');
+        let nodes = $(div_temp).find('div');
+        let found = false;
+        for (let i = 0; i < nodes.length; i++) {
+          let div1_tag_value = nodes[i].getAttribute('tag');
+          if (div1_tag_value == idValue) {
+            found = true;
+            break;
+          }
+        }
+        if (!found)
+          div_temp.append(div_to_add);  //child div append in parent div
+        $('#' + contextualObject).val('');
+        //clear the textboc control
+
+        $(contextualObjectLi).parent().hide();
+      }
+    }
+
+    //  Auto complete option create customly 
+    function setValueForControl(source, current, idValue, idModelPropName, contextualObjectLi, contextualObject) {
+      let source_temp = document.getElementById(source.trim());
+      if (source_temp != null) {
+        source_temp.value = current;
+        if (idValue != null && idModelPropName != null) {
+          source_temp.setAttribute('tag', idValue);   //set tag
+          source_temp.setAttribute('modelProp', idModelPropName);
+        }
+      }
+      //  $('#' + contextualObject).val('');
+      $(contextualObjectLi).parent().hide();  // hide li using parent elements
+    }
+
+    function setDivValueAfterServerCall(id, currentValue, contextualObject) {
+      let div_temp = $(contextualObject).parent().find('.divContainer');
+
+      let div_to_add = $('<div class="multiDiv" tag="' + id + '">' + currentValue + '<span class="closeSkills" onclick="removeChildDiv(this);">&times</span></div>');
+      div_temp.append(div_to_add);
+      $(div_temp).show();
+      $(contextualObject).parent().find('ul').hide();
+    }
+    function alert1() {
+    }
+    //************** BINDING EVENTS FOR CLOSE ************//
+    function removeChildDiv(elementRef) {
+      elementRef.parentElement.parentElement.removeChild(elementRef.parentElement);
+    }
+    var modalLoader = function () {
+      // let imageDiv = $("<div style='text-align: center;'><img src='../../assets//images//loader_square.gif'></div>");
+      let imgLoader = document.getElementById("modalLoader");
+      imgLoader.style.display = 'block';
+      return imgLoader;
+
+    }
+
+    var showMessage = function (isSuccess, msg) {
+      let divDynamicDivControlForMessage = document.getElementById('divDynamicDivControlForMessage');
+
+      if (isSuccess) {
+
+        $(divDynamicDivControlForMessage).addClass('dynamicDivToastrSuccess');
+        $(divDynamicDivControlForMessage).removeClass('dynamicDivToastrError');
+      }
+      else {
+        $(divDynamicDivControlForMessage).removeClass('dynamicDivToastrSuccess');
+        $(divDynamicDivControlForMessage).addClass('dynamicDivToastrError');
+
+      }
+      $(divDynamicDivControlForMessage).show();
+      //dynamicDivToastrHide
+      $(divDynamicDivControlForMessage).removeClass('dynamicDivToastrHide');
+
+      divDynamicDivControlForMessage.innerText = msg;
+
+      setTimeout(function () { $(divDynamicDivControlForMessage).fadeOut('slow'); }, 2000)
+
+    }
+
+    function absoluteCoordinates($element) {
+      var sTop = $(window).scrollTop();
+      var sLeft = $(window).scrollLeft();
+      var w = $element.width();
+      var h = $element.height();
+      var offset = $element.offset();
+      var $p = $element;
+      while (typeof $p == 'object') {
+        var pOffset = $p.parent().offset();
+        if (typeof pOffset == 'undefined') break;
+        offset.left = offset.left + (pOffset.left);
+        offset.top = offset.top + (pOffset.top);
+        $p = $p.parent();
+      }
+
+      var pos = {
+        left: offset.left + sLeft,
+        right: offset.left + w + sLeft,
+        top: offset.top + sTop,
+        bottom: offset.top + h + sTop,
+      }
+      pos.tl = { x: pos.left, y: pos.top };
+      pos.tr = { x: pos.right, y: pos.top };
+      pos.bl = { x: pos.left, y: pos.bottom };
+      pos.br = { x: pos.right, y: pos.bottom };
+      return pos;
+    }
+  </script>
+  <style>
+    .instrtblWidth {
+      width: 10px;
+    }
+
+    ul.ba {
+      list-style-type: none;
+    }
+
+    .loader {
+      position: fixed;
+      text-align: center;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 9999;
+
+    }
+
+    .printTable>td {
+      font-size: 15px;
+      border: 1px solid rgb(212, 210, 210);
+      border-collapse: collapse;
+      padding: 7px;
+      /* border: 1px solid #dddddd; */
+    }
+
+    /* .printTable>th {
+      border: 1px solid #dddddd;
+    } */
+
+    .printTableTwo {
+      width: 100%;
+      font-size: 15px;
+      border-spacing: 7px;
+      border: 1px solid #dbd5d5;
+    }
+
+    .printTableTwo>tr {
+      border: 1px solid #dbd5d5;
+    }
+
+    .tableWidth {
+      width: 100%;
+    }
+
+    .tblActive {
+      border: 3px solid blue !important;
+      font-weight: bold;
+    }
+
+    .theadHide {
+      display: none;
+    }
+
+    .liStyle {
+      cursor: pointer;
+
+    }
+
+    .tdSize {
+      height: 40px;
+      width: 232px;
+    }
+
+    .message {
+      font-size: large;
+    }
+
+    .center {
+      margin: auto;
+      width: 50%;
+      border: 3px solid transparent;
+      padding: 10px;
+    }
+
+    #dynamicGrid {
+
+      width: 255px;
+    }
+
+    .dashBoardDivHeight {
+      height: 280px !important;
+    }
+
+    .donutDashBoardDiv {
+      height: 210px !important;
+    }
+
+    .table-scrollable {
+      overflow-y: auto !important;
+    }
+
+    .portlet.light .portlet-body {
+      padding-top: 0px !important;
+    }
+
+    .titlePClass {
+      float: left;
+      margin-left: 5px;
+    }
+
+    .pillsPosition {
+      padding-right: 5px;
+    }
+
+    .navigationHolder {
+      float: right;
+    }
+
+    ::-webkit-scrollbar {
+      width: 5px;
+      height: 5px;
+    }
+
+    /* Track */
+    ::-webkit-scrollbar-track {
+      background: #f1f1f1;
+    }
+
+    /* Handle */
+    ::-webkit-scrollbar-thumb {
+      background: #888;
+    }
+
+    /* Handle on hover */
+    ::-webkit-scrollbar-thumb:hover {
+      background: #555;
+    }
+
+    .rotateIcon {
+      transform: rotate(90deg);
+    }
+
+    .anchorposition {
+      float: right;
+      padding-right: 2px;
+      cursor: pointer !important;
+    }
+
+    .numericTdContent {
+      text-align: right !important;
+      padding-right: 30px !important;
+
+    }
+
+    .numericTdContentWithZero {
+      background-color: darkorange;
+      color: white;
+      border-radius: 2px;
+    }
+
+    .actualContent {
+      height: 273px !important;
+      overflow-x: hidden;
+      float: left;
+      width: 385px;
+      margin-top: -5px;
+      overflow-y: scroll;
+      margin-left: 5px;
+    }
+
+    .tableDivStyle {
+      height: 273px !important;
+      overflow-x: scroll !important;
+      width: 385px;
+    }
+
+    .divSideBySide {
+
+      border: 1px dotted #df6d97;
+      float: left;
+      width: 400px;
+      height: 300px;
+      text-align: center;
+      font-weight: lighter;
+      margin-left: 8px;
+      margin-right: 5px;
+      margin-bottom: 10px;
+      background: white;
+      border-radius: 7px;
+      box-shadow: 0px 0px 2px 2px #ecece0;
+
+    }
+
+    /* .divSideBySide  p{
+      /* float:left;
+      margin-left: 10px; 
+    } */
+
+    .tableStyle {
+      font-size: 13px !important;
+      overflow: auto;
+      width: 385px;
+      margin-left: 5px;
+    }
+
+    .tableStyle thead {
+      background-color: #0b76d2;
+      color: white;
+      font-weight: normal;
+    }
+
+    .tableStyle td {
+      border-bottom: 1px dotted;
+      padding-right: 5px;
+      padding-bottom: 2px;
+      padding-top: 2px;
+      text-align: left;
+      padding-left: 5px;
+    }
+
+    .tableStyle th {
+      border-top: 1px solid;
+      border-bottom: 1px solid;
+      padding-right: 9px !important;
+      text-align: left !important;
+      height: 35px;
+      padding-left: 5px;
+      background-color: #179dac;
+    }
+
+    .multiDiv {
+      border: 1px solid rgb(197, 194, 194);
+      border-radius: 5px;
+      background-color: #f6f6f6;
+      height: 20px;
+      padding-top: 0px;
+      margin-top: 5px;
+      text-decoration: none;
+      font-size: 13px;
+      color: black;
+      display: inline-block;
+      position: relative;
+    }
+
+    .tableStyle tr:nth-child(even) {
+      background: rgb(205, 205, 207);
+    }
+
+    .tableStyle tr:nth-child(odd) {
+      background: rgb(245, 245, 245);
+    }
+
+    tr:nth-child(even) {
+      background: #f0f0f0;
+    }
+
+    tr:nth-child(odd) {
+      background: white;
+    }
+
+    textarea {
+      resize: none;
+    }
+
+    .spanData {
+      width: 13px;
+      font-size: 9px;
+      white-space: nowrap;
+      float: left;
+      text-align: center;
+      height: 20px;
+    }
+
+    .span0 {
+      background: #8f9bf2;
+      color: black;
+      width: 13px;
+      font-size: 9px;
+      white-space: nowrap;
+      float: left;
+      text-align: center;
+      height: 20px;
+      padding-top: 3px;
+    }
+
+    .span8 {
+      background: #296848;
+      color: white;
+      width: 13px;
+      font-size: 9px;
+      white-space: nowrap;
+      float: left;
+      text-align: center;
+      height: 20px;
+      padding-top: 3px;
+    }
+
+    .spanHoliday {
+      background: yellow;
+      color: black;
+      width: 13px;
+      font-size: 9px;
+      white-space: nowrap;
+      float: left;
+      text-align: center;
+      height: 20px;
+      padding-top: 3px;
+    }
+
+    .spanLabel {
+      background: white;
+      color: black;
+    }
+
+    .spanLeave {
+      background: #ffbf00;
+      color: white;
+      width: 13px;
+      font-size: 9px;
+      white-space: nowrap;
+      float: left;
+      text-align: center;
+      height: 20px;
+      padding-top: 3px;
+    }
+
+    .spanUnderUtilized {
+      background: #2d87c7;
+      color: white;
+      width: 13px;
+      font-size: 9px;
+      white-space: nowrap;
+      float: left;
+      text-align: center;
+      height: 20px;
+      padding-top: 3px;
+    }
+
+
+    .spanEven {
+      background: #4b4ea8;
+      color: white;
+      width: 13px;
+      font-size: 9px;
+      white-space: nowrap;
+      float: left;
+      text-align: center;
+      height: 15px;
+      /* margin-left: -3px; */
+      /* padding-top: 3px; */
+    }
+
+    .spanOdd {
+      background: #b25d5d;
+      color: white;
+      width: 13px;
+      font-size: 9px;
+      white-space: nowrap;
+      float: left;
+      text-align: center;
+      height: 15px;
+      /* margin-left: -3px; */
+      /* padding-top: 3px; */
+    }
+
+    caption,
+    .nodata {
+      padding-top: 40px !important;
+      text-align: center !important;
+      font-size: 20px;
+    }
+
+    .container {
+      padding: 2px 16px;
+    }
+
+    .marginNeg3px {
+      margin-left: -3px;
+    }
+
+    .cardStyle {
+      box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+      transition: 0.3s;
+      color: white;
+      width: 385px;
+      height: 260px;
+      border-radius: 5px;
+      /* background-color: #00807a; */
+      margin-top: 5px;
+      margin-left: 5px;
+    }
+
+    .colDiv {
+      box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+      transition: 0.3s;
+      color: black;
+      width: 75px;
+      height: 75px;
+      margin-left: 30px;
+      border-radius: 5px;
+      background-color: white;
+      margin-bottom: 5px;
+    }
+
+    .container1 {
+
+      padding-top: 0px;
+    }
+
+    .headerLine {
+      text-align: left;
+      padding-top: 15px;
+      padding-left: 15px;
+      position: absolute;
+    }
+
+    .card1 {
+      margin-bottom: 10px;
+    }
+
+    .summaryData {
+      background-color: #005780;
+      width: auto;
+      color: white;
+      padding-left: 30px !important;
+      padding-top: 5px;
+      padding-bottom: 5px;
+      border-radius: 6px;
+    }
+
+    .summaryData>li {
+      padding-right: 20px !important;
+    }
+
+    .colDiv {
+      height: 60px;
+      margin-left: 5px;
+    }
+
+    .closeSkills {
+      cursor: pointer;
+      position: absolute;
+      top: 50%;
+      right: 0%;
+      padding: 20px -7px;
+      background: #bbb;
+      border-radius: 15px;
+      color: red !important;
+      border: 1px solid rgb(196, 3, 3) !important;
+      transform: translate(0%, -50%);
+    }
+
+    .closeSkills:hover {
+      background: #bbb;
+    }
+
+    @-webkit-keyframes fadein {
+      from {
+        bottom: 0;
+        opacity: 0;
+      }
+
+      to {
+        bottom: 30px;
+        opacity: 1;
+      }
+    }
+
+    @keyframes fadein {
+      from {
+        bottom: 0;
+        opacity: 0;
+      }
+
+      to {
+        bottom: 30px;
+        opacity: 1;
+      }
+    }
+
+    @-webkit-keyframes expand {
+      from {
+        min-width: 50px
+      }
+
+      to {
+        min-width: 350px
+      }
+    }
+
+    @keyframes expand {
+      from {
+        min-width: 50px
+      }
+
+      to {
+        min-width: 350px
+      }
+    }
+
+    @-webkit-keyframes stay {
+      from {
+        min-width: 350px
+      }
+
+      to {
+        min-width: 350px
+      }
+    }
+
+    @keyframes stay {
+      from {
+        min-width: 350px
+      }
+
+      to {
+        min-width: 350px
+      }
+    }
+
+    @-webkit-keyframes shrink {
+      from {
+        min-width: 350px;
+      }
+
+      to {
+        min-width: 50px;
+      }
+    }
+
+    @keyframes shrink {
+      from {
+        min-width: 350px;
+      }
+
+      to {
+        min-width: 50px;
+      }
+    }
+
+    @-webkit-keyframes fadeout {
+      from {
+        bottom: 30px;
+        opacity: 1;
+      }
+
+      to {
+        bottom: 60px;
+        opacity: 0;
+      }
+    }
+
+    @keyframes fadeout {
+      from {
+        bottom: 30px;
+        opacity: 1;
+      }
+
+      to {
+        bottom: 60px;
+        opacity: 0;
+      }
+    }
+
+    .ulHelper {
+
+      z-index: 1;
+      width: 345px;
+      height: 200px;
+      cursor: pointer;
+      overflow: scroll;
+      border-radius: 5px;
+      position: absolute;
+      background-color: beige;
+      border: #cfcfd3 1px solid;
+    }
+
+    .divContainer {
+      background-color: rgb(252, 252, 252);
+      border-radius: 5px;
+      border: #f5f5f5 1px solid;
+      width: auto;
+      height: auto;
+      overflow-x: auto;
+    }
+
+    .list-group-item {
+      position: relative;
+      display: block;
+      padding: 10px 15px;
+      background-color: beige !important;
+      border: 0px solid #ddd !important;
+    }
+
+    .fc-scrollgrid {
+      margin-top: -17px;
+    }
+
+    .paragraph {
+      margin: 0 0 1px !important;
+    }
+/* Small devices (landscape phones, 544px and up) */
+@media screen and (min-width: 150px) and (max-width : 780px) {  
+    .paragraph {font-size: 10px;}
+  }
+
+  /* Medium devices (tablets, 768px and up) */
+  /* @media (min-width: 768px) {  
+    .paragraph {font-size: 14px;}
+  } */
+
+  /* Large devices (desktops, 992px and up) */
+  @media (min-width: 992px) { 
+    .paragraph {font-size: 14px;}
+  }
+
+  /* Extra large devices (large desktops, 1200px and up) */
+  @media (min-width: 1200px) {  
+    .paragraph {font-size: 14px;}
+  }
+
+
+
+    .dualDiv {
+      margin-bottom: 20px;
+      height: 100px;
+    }
+
+    .dualTableStyle {
+      font-size: 13px !important;
+      overflow: auto;
+      width: 370px;
+      margin-left: 5px;
+      border-bottom: 1px solid black;
+    }
+
+    .dualTableStyle thead {
+      background-color: #0b76d2;
+      color: white;
+      font-weight: normal;
+    }
+
+    .dualTd {
+      height: 25px !important;
+    }
+
+    .dualTableStyle td {
+      border-bottom: 1px dotted;
+      padding-right: 5px;
+      padding-bottom: 2px;
+      padding-top: 2px;
+      text-align: center;
+      padding-left: 5px;
+    }
+
+    .dualTableStyle th {
+      border-top: 1px solid;
+      border-bottom: 1px solid;
+      padding-right: 5px;
+      text-align: center !important;
+      height: 35px;
+      padding-left: 5px;
+      background-color: #179dac;
+    }
+
+    .colDiv {
+      border: 1px solid;
+    }
+
+    .downloadArrowClass {
+      width: 30px;
+      color: red;
+      border-radius: 5px;
+      border: 2px solid red;
+      text-align: center;
+      margin-top: 2px;
+      font-weight: bold;
+      font-size: larger;
+      margin-left: 10px;
+    }
+
+    .deleteClass {
+      width: 30px;
+      color: red;
+      border-radius: 5px;
+      border: 2px solid red;
+      text-align: center;
+      margin-top: 2px;
+      font-weight: bold;
+      font-size: larger;
+      margin-left: 10px;
+      cursor: pointer;
+    }
+
+    .panel-title>a:before {
+      float: right !important;
+      font-family: FontAwesome;
+      content: "-";
+      font-size: xx-large;
+      padding-right: 5px;
+      margin-top: -9px;
+    }
+
+    .panel-body {
+      height: 650px;
+      overflow-x: scroll;
+    }
+
+    .panel-body1 {
+      height: 525px;
+      overflow-x: scroll;
+    }
+
+
+    .panel-title>a.collapsed:before {
+      float: right !important;
+      content: "+";
+      font-size: x-large;
+    }
+
+    .panel-title>a:hover,
+    .panel-title>a:active,
+    .panel-title>a:focus {
+      text-decoration: none;
+    }
+
+    .Historykey {
+      text-align: left;
+      margin-right: 30px;
+    }
+
+    .Historyvalue {
+      display: inline-block;
+      text-align: center !important;
+      margin-left: 30px;
+
+    }
+
+    .conclusionSuc {
+      background-color: green !important;
+      color: white !important;
+    }
+
+
+    .conclusionFail {
+      background-color: red !important;
+      color: white !important;
+    }
+
+    .barcodeAdd {
+      background-color: blue !important;
+      color: white !important;
+    }
+
+    .dynamicDivToastr {
+      width: 300px;
+      height: 100px;
+      color: #eee;
+      position: absolute;
+      top: 0;
+      right: 0;
+      z-index: 999;
+
+      border-radius: 5px 5px 5px 5px;
+      padding-left: 5px;
+    }
+
+    .dynamicDivToastrSuccess {
+      background: green;
+
+    }
+
+    .dynamicDivToastrError {
+      background: red;
+
+    }
+
+    .dynamicDivToastrHide {
+      display: none;
+
+    }
+.cf{
+  font-size: 15px;
+}
+.table-bordered>thead>tr>td, 
+.table-bordered>thead>tr>th {
+    border-bottom-width: 0px!important;  
+}
+
+    @media only screen and (max-width: 800px) {
+    
+    /* Force table to not be like tables anymore */
+  .no-more-tables table, 
+   thead,tbody,th,td, tr { 
+    display: block; 
+  }
+  
+  /* Hide table headers (but not display: none;, for accessibility) */
+  .no-more-tables thead tr { 
+    position: absolute;
+    top: -9999px;
+    left: -9999px;
+  }
+  
+  tr { border: 1px solid #ccc; }
+  
+  .no-more-tables td { 
+    /* Behave  like a "row" */
+    border: none;
+    border-bottom: 1px solid #eee; 
+    position: relative;
+    padding-left: 40%; 
+    white-space: normal;
+    text-align:left;
+    width:370px;
+  }
+  
+  .no-more-tables td:before { 
+    /* Now like a table header */
+    position: absolute;
+    top: 6px;
+    left: 6px;
+    width: 45%; 
+    padding-right: 10px; 
+    white-space: nowrap;
+    text-align:left;
+    font-weight: bold;
+    content: attr(data-title); 
+  }
+  }
+  </style>
+
+</head>
+
+<body>
+  <div id="divDynamicDivControlForMessage" class="dynamicDivToastr dynamicDivToastrSuccess dynamicDivToastrHide">
+    test message
+  </div>
+  <div class="serial_div">
+    <button class="btn" id="connect-to-serial">Connect</button>
+  </div>
+  <div class="loader" id="modalLoader" style="display: none;">
+    <img src="../../assets//images//loader_square.gif" alt="please wait while we set the system"
+      style="padding-top: 400px;">
+  </div>
+  <app-root></app-root>
+
+</body>
+</html>

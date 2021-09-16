@@ -1,0 +1,399 @@
+<div *ngIf="(isFormMsg == true)" class="alert alert-warning alert-dismissible fade in calibrationMsg" style="padding-top: 0px!important;padding-bottom: 0px !important;margin-top: -12px!important;
+margin-bottom: 11px!important;font-size: 12px!important;">
+
+  <strong><i class="fa fa-star checked" aria-hidden="true"></i></strong> {{formMsg}}
+</div>
+<div class="modal-content">
+  <form [formGroup]="form" #validationForm="ngForm" (submit)="submitForm()">
+    <div class="modal-header">
+      <h4 class="modal-title" style="color: #337ab7;">{{title}}</h4>
+      <div class="btn-group headerbtn">
+
+
+        <!-- TODO: this value will be the saved value -->
+        <input type="hidden" #hiddenId id="hiddenId" value="{{populateIdFieldValue()}}" />
+      </div>
+    </div>
+
+    <div id="scroll" class="modal-body">
+      <!-- ****************** Looping the Sections *************************-->
+      <ng-template ngFor let-input [ngForOf]="formData.Sections">
+        <!-- //Check for normal/Table/Header type of Sections -->
+        <div class="well section col-sm-12" data-toggle="collapse" [attr.data-target]="'#'+input.Id">
+          {{input.SectionName}}
+        </div>
+
+        <div [id]="input.Id">
+          <!-- Handling sub section -->
+          <div *ngFor="let subsection of input.SubSections">
+            <!-- {{subsection.SectionName}} -->
+            <div *ngIf="(subsection.SectionTypeName == 'normal')">
+              <div *ngFor="let sectionAttribute of subsection.SectionAttributes">
+                <ng-container [ngSwitch]="sectionAttribute.ControlType">
+                  <ng-template [ngSwitchCase]="'tblbutton'">
+                    <div class="col-sm-12">
+                      <button [id]="sectionAttribute.ControlName" title="Add" class="btn btn-primary tblbtn"><i
+                          id="hover" [class]="sectionAttribute.CssClassName" aria-hidden="true"></i></button>
+                    </div>
+                  </ng-template>
+                </ng-container>
+              </div>
+            </div>
+          </div>
+
+
+          <!-- HANDLING SECTION ATTRIBUTES -->
+          <div *ngFor="let input1 of input.SectionAttributes">
+            <ng-container [ngSwitch]="input1.ControlType">
+
+              <!-- ******************************** HIDDEN *********************************** -->
+              <ng-template [ngSwitchCase]="'hidden'">
+                <input [formControlName]="input1.ControlName" [type]="input1.ValueType" [class]="input1.CssClassName"
+                  [id]="input1.ControlName" (input)='data =$event.target["value"]'
+                  [value]="populateFieldValue(input1.ModelPropName, input1,  input.ModelObjectName)" required />
+              </ng-template>
+
+              <ng-template [ngSwitchCase]="'number'">
+                <div *ngFor="let input2 of input1.Validators">
+                  <div class="col-sm-3">
+                    <label> {{getProperLabelName(input1.LabelName)}}</label>
+
+                    <input [formControlName]="input1.ControlName" [type]="input1.ValueType" class="form-control"
+                      [id]="input1.ControlName" [required]="input2.Required"
+                      [value]="getDateValue(input1.ModelPropName,input1,input.ModelObjectName)" />
+                    <!------------------------------------------------Form Validation  ------------------------------->
+                    <div class="error"
+                      *ngIf="form.get(input1.ControlName).invalid && (form.get(input1.ControlName).dirty || form.get(input1.ControlName).touched)">
+                      <!-- <div *ngIf="form.get(input1.ControlName).errors.required">
+                        * {{getProperLabelName(input1.LabelName)}} is required.
+                     </div> -->
+                      <div *ngIf="form.get(input1.ControlName).errors.pattern">
+                        {{input2.ValidationMsg}}
+                      </div>
+                      <div
+                        *ngIf="form.get(input1.ControlName).errors.minlength || form.get(input1.ControlName).errors.maxlength">
+                        * Minlength {{input2.Minlength}} and max length {{input2.Maxlength}}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </ng-template>
+
+              <!-- ******************************** TextArea *********************************** -->
+              <ng-template [ngSwitchCase]="'textarea'">
+                <div *ngFor="let input2 of input1.Validators">
+                  <div class="col-sm-3">
+                    <label> {{getProperLabelName(input1.LabelName)}}</label>
+                    <i *ngIf="(input1.HelpText != null )" class="fa fa-info-circle"
+                      style="margin-left: 5px;margin-right: 5px;text-align: left;" [tooltip]="input1.HelpText"></i>
+                    <textarea [formControlName]="input1.ControlName" class="form-control" [id]="input1.ControlName"
+                      [pattern]="input2.Pattern" [minlength]="input2.Minlength" [maxlength]="input2.Maxlength"
+                      (input)='data =$event.target["value"]'
+                      [ngModel]="populateFieldValue(input1.ModelPropName, input1,  input.ModelObjectName)"
+                      required></textarea>
+                    <!------------------------------------------------Form Validation  ------------------------------->
+                    <div class="error"
+                      *ngIf="form.get(input1.ControlName).invalid && (form.get(input1.ControlName).dirty || form.get(input1.ControlName).touched)">
+                      <div *ngIf="form.get(input1.ControlName).errors.required">
+                        <div *ngIf="(input2.Required == true)">
+                          * {{getProperLabelName(input1.LabelName)}} is required.
+                        </div>
+                      </div>
+                      <div *ngIf="form.get(input1.ControlName).errors.pattern">
+                        {{input2.ValidationMsg}}
+                      </div>
+                      <div
+                        *ngIf="form.get(input1.ControlName).errors.minlength || form.get(input1.ControlName).errors.maxlength">
+                        * Minlength {{input2.Minlength}} and max length {{input2.Maxlength}}
+                      </div>
+                      <div id="validationMsg"></div>
+                    </div>
+                  </div>
+                </div>
+
+              </ng-template>
+
+
+              <!-- ******************************** DATE *********************************** -->
+              <ng-template [ngSwitchCase]="'date'">
+                <div *ngFor="let input2 of input1.Validators">
+                  <div class="col-sm-3">
+                    <label> {{getProperLabelName(input1.LabelName)}}</label>
+
+                    <input [formControlName]="input1.ControlName" [type]="input1.ValueType" class="form-control"
+                      [id]="input1.ControlName" [required]="input2.Required"
+                      [value]="getDateValue(input1.ModelPropName,input1,input.ModelObjectName)" />
+                    <!------------------------------------------------Form Validation  ------------------------------->
+                    <div class="error"
+                      *ngIf="form.get(input1.ControlName).invalid && (form.get(input1.ControlName).dirty || form.get(input1.ControlName).touched)">
+                      <!-- <div *ngIf="form.get(input1.ControlName).errors.required">
+                        * {{getProperLabelName(input1.LabelName)}} is required.
+                     </div> -->
+                      <div *ngIf="form.get(input1.ControlName).errors.pattern">
+                        {{input2.ValidationMsg}}
+                      </div>
+                      <div
+                        *ngIf="form.get(input1.ControlName).errors.minlength || form.get(input1.ControlName).errors.maxlength">
+                        * Minlength {{input2.Minlength}} and max length {{input2.Maxlength}}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </ng-template>
+
+
+              <!-- ******************************** ICONBUTTON *********************************** -->
+              <ng-template [ngSwitchCase]="'iconButton'">
+                <div class="col-sm-1">
+                  <i [class]="input1.CssClassName" style="font-size:24px"></i>
+                </div>
+              </ng-template>
+              <!-- ******************************** BUTTON *********************************** -->
+              <ng-template [ngSwitchCase]="'button'">
+                <div class="col-sm-1" style="float:right;">
+                  <!-- <div class="form-group" *ngIf="(input1.isEditable == true)"> -->
+
+                  <button [type]="input1.ValueType" [name]="input1.ControlName" [id]="input1.ControlName"
+                    [class]="input1.CssClassName">{{getProperLabelName(input1.LabelName)}}</button>
+                  <!-- <input type="button" [name]="input1.ControlName"  [id]="input1.ControlName" [value]="getProperLabelName(input1.LabelName)"/> -->
+                </div>
+              </ng-template>
+
+              <!-- ******************************** SELECT *********************************** -->
+              <ng-template [ngSwitchCase]="'select'">
+                <div class="col-sm-3">
+                  <div style="display:inline;white-space: nowrap;">
+                    <label [for]="input1.ControlName"> {{getProperLabelName(input1.LabelName)}} </label>
+                    <i *ngIf="(input1.IncludeRefresh != null && input1.IncludeRefresh)" class="fa fa-refresh"
+                      style="font-size:10px;float: right;cursor: pointer;margin-top: 8px;margin-right: 2px;"
+                      [id]="getIdForRefresh(input1.ControlName)">
+                    </i>
+                    <i *ngIf="(input1.HelpText != null )" class="fa fa-info-circle"
+                      style="margin-left: 5px;margin-right: 5px;text-align: left;" [tooltip]="input1.HelpText"></i>
+                  </div>
+                  <select [formControlName]="input1.ControlName" [name]="input1.ControlName" class="form-control"
+                    [id]="input1.ControlName">
+                  </select>
+
+                </div>
+              </ng-template>
+
+              <!-- ******************************** SELECT Multiple*********************************** -->
+              <ng-template [ngSwitchCase]="'selectMultiple'">
+                <div class="col-sm-3">
+                  <label [for]="input1.ControlName"> {{getProperLabelName(input1.LabelName)}}</label>
+                  <select multiple [formControlName]="input1.ControlName" [name]="input1.ControlName"
+                    class="form-control" [id]="input1.ControlName" [selectedIndex]="input1.CurrentValue" required>
+                  </select>
+                </div>
+              </ng-template>
+
+              <ng-template [ngSwitchCase]="'typoselect'">
+                <div class="col-sm-3">
+                  <label [for]="input1.ControlName"> {{getProperLabelName(input1.LabelName)}} </label>
+                  <input [type]="input1.ValueType" [id]="input1.ControlName" list="browsers" class="form-control"
+                    autocomplete="off" required />
+                  <ul [class]="getClassNameForULHelper(input1.ControlName,'_ULHelper')" style="display: none;">
+                  </ul>
+                </div>
+              </ng-template>
+              <ng-template [ngSwitchCase]="'div'">
+                <div class="col-sm-9">
+                  <full-calendar id="calendar" #calendar [options]="calendarOptions"></full-calendar>
+                </div>
+
+                <button type="button" class="btn btn-primary" data-toggle="modal" style="margin-top: 40px;"
+                  (click)="populateController()"><i class="fa fa-plus" aria-hidden="true"></i>
+                </button>
+
+              </ng-template>
+            </ng-container>
+          </div>
+
+        </div>
+      </ng-template>
+
+    </div>
+  </form>
+</div>
+
+<!-- The Modal -->
+<!-- <div id="myModal" class="modal">
+
+  <div class="modal-content timeSheet-content">
+
+    <div class="modal-header">
+      <span class="close" id="closeId">&times;</span>
+      <h5 class="modal-title">
+        <h5 class="modal-title">Modal For Calendar</h5>
+      </h5>
+    </div>
+    <div class="modal-body" id="contentSizeForBody">
+      <div class="col-sm-3">
+        <form>
+          <div class="form-group">
+            <label>Update Value</label>
+            <input type="number" class="form-control" id="updateDate">
+          </div>
+        </form>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button type="button" class="btn btn-primary" (click)="updateDateValue()">Save</button>
+    </div>
+  </div>
+
+</div> -->
+
+
+<div id="myModal" class="modal">
+
+  <div class="modal-content timeSheet-content">
+
+    <div class="modal-header">
+
+      <h5 class="modal-title">
+        <h5 class="modal-title" style="padding-bottom:20px;padding-top:10px;">Assignment</h5>
+      </h5>
+    </div>
+    <form>
+
+      <div class="modal-body" id="contentSizeForBody" *ngIf="(popUpformData != null)">
+
+        <ng-template ngFor let-input [ngForOf]="popUpformData.Sections">
+          <div *ngFor="let input1 of input.SectionAttributes">
+            <ng-container [ngSwitch]="input1.ControlType">
+
+              <!-- ******************************** HIDDEN *********************************** -->
+              <ng-template [ngSwitchCase]="'hidden'">
+                <input [formControlName]="input1.ControlName" [type]="input1.ValueType" [class]="input1.CssClassName"
+                  [id]="input1.ControlName" (input)='data =$event.target["value"]'
+                  [value]="populateFieldValue(input1.ModelPropName, input1,  input.ModelObjectName)" required />
+              </ng-template>
+
+
+              <!-- ******************************** Number *********************************** -->
+              <ng-template [ngSwitchCase]="'number'">
+                <div *ngFor="let input2 of input1.Validators">
+                  <div class="col-sm-9">
+                    <label> {{getProperLabelName(input1.LabelName)}}</label>
+                    <i *ngIf="(input1.HelpText != null )" class="fa fa-info-circle"
+                      style="margin-left: 5px;margin-right: 5px;text-align: left;" [tooltip]="input1.HelpText"></i>
+                    <input [formControlName]="input1.ControlName" [type]="input1.ValueType" class="form-control"
+                      [id]="input1.ControlName" [pattern]="input2.Pattern" [minlength]="input2.Minlength"
+                      [maxlength]="input2.Maxlength" (input)='data =$event.target["value"]'
+                      [ngModel]="populateFieldValue(input1.ModelPropName, input1,  input.ModelObjectName)" required />
+                    <!------------------------------------------------Form Validation  ------------------------------->
+                    <div class="error"
+                      *ngIf="form.get(input1.ControlName).invalid && (form.get(input1.ControlName).dirty || form.get(input1.ControlName).touched)">
+                      <div *ngIf="form.get(input1.ControlName).errors.required">
+                        <div *ngIf="(input2.Required == true)">
+                          * {{getProperLabelName(input1.LabelName)}} is required.
+                        </div>
+                      </div>
+                      <div *ngIf="form.get(input1.ControlName).errors.pattern">
+                        {{input2.ValidationMsg}}
+                      </div>
+                      <div
+                        *ngIf="form.get(input1.ControlName).errors.minlength || form.get(input1.ControlName).errors.maxlength">
+                        * Minlength {{input2.Minlength}} and max length {{input2.Maxlength}}
+                      </div>
+                      <div id="validationMsg"></div>
+                    </div>
+                  </div>
+                </div>
+              </ng-template>
+              <!-- ******************************** DATE *********************************** -->
+              <ng-template [ngSwitchCase]="'date'">
+                <div *ngFor="let input2 of input1.Validators">
+                  <div class="col-sm-9">
+                    <label> {{getProperLabelName(input1.LabelName)}}</label>
+                    <i *ngIf="(input1.HelpText != null )" class="fa fa-info-circle"
+                      style="margin-left: 5px;margin-right: 5px;text-align: left;" [tooltip]="input1.HelpText"></i>
+                    <input [formControlName]="input1.ControlName" [type]="input1.ValueType" class="form-control"
+                      [id]="input1.ModelPropType" [pattern]="input2.Pattern" [minlength]="input2.Minlength"
+                      [maxlength]="input2.Maxlength" (input)='data =$event.target["value"]'
+                      [ngModel]="populateFieldValue(input1.ModelPropName, input1,  input.ModelObjectName)" required />
+                    <!------------------------------------------------Form Validation  ------------------------------->
+                    <div class="error"
+                      *ngIf="form.get(input1.ControlName).invalid && (form.get(input1.ControlName).dirty || form.get(input1.ControlName).touched)">
+                      <div *ngIf="form.get(input1.ControlName).errors.required">
+                        <div *ngIf="(input2.Required == true)">
+                          * {{getProperLabelName(input1.LabelName)}} is required.
+                        </div>
+                      </div>
+                      <div *ngIf="form.get(input1.ControlName).errors.pattern">
+                        {{input2.ValidationMsg}}
+                      </div>
+                      <div
+                        *ngIf="form.get(input1.ControlName).errors.minlength || form.get(input1.ControlName).errors.maxlength">
+                        * Minlength {{input2.Minlength}} and max length {{input2.Maxlength}}
+                      </div>
+                      <div id="validationMsg"></div>
+                    </div>
+                  </div>
+                </div>
+              </ng-template>
+
+              <!-- ******************************** SELECT *********************************** -->
+              <ng-template [ngSwitchCase]="'select'">
+                <div class="col-sm-9">
+                  <div style="display:inline;white-space: nowrap;">
+                    <label [for]="input1.ControlName"> {{getProperLabelName(input1.LabelName)}} </label>
+                    <i *ngIf="(input1.IncludeRefresh != null && input1.IncludeRefresh)" class="fa fa-refresh"
+                      style="font-size:10px;float: right;cursor: pointer;margin-top: 8px;margin-right: 2px;"
+                      [id]="getIdForRefresh(input1.ControlName)">
+                    </i>
+                    <i *ngIf="(input1.HelpText != null )" class="fa fa-info-circle"
+                      style="margin-left: 5px;margin-right: 5px;text-align: left;" [tooltip]="input1.HelpText"></i>
+                  </div>
+                  <select [formControlName]="input1.ControlName" [name]="input1.ControlName" class="form-control"
+                    [id]="input1.ControlName">
+                  </select>
+
+                </div>
+              </ng-template>
+
+              <!-- ******************************** Text *********************************** -->
+              <ng-template [ngSwitchCase]="'text'">
+                <div *ngFor="let input2 of input1.Validators">
+                  <div class="col-sm-9">
+                    <label> {{getProperLabelName(input1.LabelName)}}</label>
+                    <i *ngIf="(input1.HelpText != null )" class="fa fa-info-circle"
+                      style="margin-left: 5px;margin-right: 5px;text-align: left;" [tooltip]="input1.HelpText"></i>
+                    <input [formControlName]="input1.ControlName" [type]="input1.ValueType" class="form-control"
+                      [id]="input1.ControlName" [pattern]="input2.Pattern" [minlength]="input2.Minlength"
+                      [maxlength]="input2.Maxlength" (input)='data =$event.target["value"]'
+                      [ngModel]="populateFieldValue(input1.ModelPropName, input1,  input.ModelObjectName)" required />
+                  </div>
+                </div>
+              </ng-template>
+
+               <!-- ******************************** TextArea *********************************** -->
+               <ng-template [ngSwitchCase]="'textarea'">
+                <div *ngFor="let input2 of input1.Validators">
+                  <div class="col-sm-9">
+                    <label> {{getProperLabelName(input1.LabelName)}}</label>
+                    <i *ngIf="(input1.HelpText != null )" class="fa fa-info-circle"
+                      style="margin-left: 5px;margin-right: 5px;text-align: left;" [tooltip]="input1.HelpText"></i>
+                    <textarea [formControlName]="input1.ControlName" class="form-control" [id]="input1.ControlName"
+                      [pattern]="input2.Pattern" [minlength]="input2.Minlength" [maxlength]="input2.Maxlength"
+                      (input)='data =$event.target["value"]' [class]="input1.CssClassName"
+                      [ngModel]="populateFieldValue(input1.ModelPropName, input1,  input.ModelObjectName)"
+                      required></textarea>
+                  </div>
+                </div>
+
+              </ng-template>
+            </ng-container>
+          </div>
+        </ng-template>
+      </div>
+      <div class="modal-footer" style="margin-top: 200px;">
+        <button type="button" id="closeId" class="btn btn-default" data-dismiss="modal">Close</button>
+        <button type="submit" class="btn btn-primary" (click)="submitPopUp()">Submit</button>
+      </div>
+    </form>
+  </div>
+
+</div>

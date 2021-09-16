@@ -1,0 +1,198 @@
+<div class="modal-content">
+    <div class="modal-body">
+        <form [formGroup]="form" (submit)="submitForm()">
+
+            <div class="panel panel-default" style="margin-top:40px;">
+                <div class="panel-bodyData">
+                    <ng-template ngFor let-input [ngForOf]="formData.Sections">
+                        <!------------------------------------------------ THIS WILL LOOP ONLY THE SECTIONS  ----------------------------------->
+                        <div class="btn-group" *ngFor="let input1 of input.SectionAttributes">
+                            <ng-container [ngSwitch]="input1.ControlType">
+
+                                <!--------------------------------------------- check Type Button --------------------------------------------------->
+                                <ng-template [ngSwitchCase]="'button'">
+                                    <button style="width:55px;" [type]="input1.ValueType" class="btn"
+                                        [name]="input1.ControlName" [id]="input1.ControlName" [title]="input1.Title">
+                                        <i id="hover" [class]="input1.CssClassName" aria-hidden="true"></i>
+                                    </button>
+                                </ng-template>
+                                <!----------------------------------- check Type Select----------------------------------------------------- -->
+                                <ng-template [ngSwitchCase]="'select'">
+                                    <div class="form-group">
+                                        <label [for]="input1.ControlName"> {{input1.LabelName}}</label>
+                                        <select [formControlName]="input1.ControlName" [name]="input1.ControlName"
+                                            [class]="input1.CssClassName" [id]="input1.ControlName">
+                                        </select>
+                                    </div>
+                                </ng-template>
+                            </ng-container>
+                        </div>
+
+                        <!------------------------------- THIS WILL LOOP OVER SUB SECTIONS --------------------------------------------------------->
+                        <div *ngFor="let subsection of input.SubSections" style="margin-top: 45PX;">
+                            <div *ngFor="let input1 of subsection.SectionAttributes">
+                                <ng-container [ngSwitch]="input1.ControlType">
+                                    <!--------------Subsection/SectionAttributes.Controltype checked----------------------------------->
+                                    <!-- check Type Button -->
+                                    <ng-template [ngSwitchCase]="'button'">
+                                        <div class="col-xs-2 col-sm-2 col-md-2 col-lg-2 setMargin">
+                                            <input [type]="input1.ValueType" [name]="input1.ControlName"
+                                                [class]="input1.CssClassName" [id]="input1.ControlName"
+                                                [value]="input1.LabelName" />
+                                        </div>
+                                    </ng-template>
+                                    <!-- checked Type Text -->
+                                    <ng-template [ngSwitchCase]="'text'">
+                                        <div [class]="getUpdateClass(input1.CssClassName)">
+                                            <label [for]="input1.ControlName"> {{input1.LabelName}}</label>
+                                            <input [formControlName]="input1.ControlName" [type]="input1.ValueType"
+                                                [name]="input1.ControlName" class="form-control"
+                                                [id]="input1.ControlName"
+                                                [value]="input1.CurrentValue ? input1.CurrentValue  : ''" />
+                                        </div>
+                                    </ng-template>
+                                    <!-- check Type Number -->
+                                    <ng-template [ngSwitchCase]="'number'">
+                                        <div class="col-sm-3">
+                                            <label [for]="input1.ControlName"> {{input1.LabelName}}</label>
+                                            <input [formControlName]="input1.ControlName" [type]="input1.ValueType"
+                                                [name]="input1.ControlName" class="form-control"
+                                                [id]="input1.ControlName"
+                                                [value]="input1.CurrentValue ? input1.CurrentValue  : ''" />
+                                        </div>
+                                    </ng-template>
+                                    <!-- check Type Email -->
+                                    <ng-template [ngSwitchCase]="'email'">
+                                        <div class="col-sm-3">
+                                            <label [for]="input1.ControlName"> {{input1.LabelName}}</label>
+                                            <input [formControlName]="input1.ControlName" [type]="input1.ValueType"
+                                                [name]="input1.ControlName" class="form-control"
+                                                [id]="input1.ControlName"
+                                                [value]="input1.CurrentValue ? input1.CurrentValue  : ''" />
+                                        </div>
+                                    </ng-template>
+                                    <!-- checked Type Date -->
+                                    <ng-template [ngSwitchCase]="'date'">
+                                        <div class="col-sm-2 currentDate">
+                                            <label [for]="input1.ControlName"> {{input1.LabelName}}</label>
+                                            <input [formControlName]="input1.ControlName" [type]="input1.ValueType"
+                                                [name]="input1.ControlName" [class]="input1.CssClassName"
+                                                [id]="input1.ControlName"
+                                                [value]="input1.CurrentValue ? input1.CurrentValue  : ''" />
+                                        </div>
+                                    </ng-template>
+                                    <!-- checked Type TypoMultiSelect -->
+                                    <ng-template [ngSwitchCase]="'typomultiselect'">
+                                        <div class="col-sm-2">
+                                            <label [for]="input1.ControlName"> {{getProperLabelName(input1.LabelName)}}
+                                            </label>
+                                            <input [type]="input1.ValueType" [id]="input1.ControlName" list="browsers"
+                                                class="form-control" autocomplete="off" required />
+                                            <div [class]="getClassNameForDiv(input1.ControlName,'_DivContainer')">
+                                            </div>
+                                            <ul [class]="getClassNameForULHelper(input1.ControlName,'_ULHelper')"
+                                                style="display: none;">
+                                            </ul>
+                                        </div>
+                                    </ng-template>
+                                    <!-- checked Type TypoSelect -->
+
+                                    <ng-template [ngSwitchCase]="'typoselect'">
+                                        <div class="col-sm-2">
+                                            <label [for]="input1.ControlName"> {{getProperLabelName(input1.LabelName)}}
+                                            </label>
+                                            <input [type]="input1.ValueType" [id]="input1.ControlName" list="browsers"
+                                                class="form-control" autocomplete="off" required />
+
+                                            <ul [class]="getClassNameForULHelper(input1.ControlName,'_ULHelper')"
+                                                style="display: none;">
+                                            </ul>
+                                        </div>
+                                    </ng-template>
+
+                                    <!-- check Type SelectMultiples -->
+                                    <ng-template [ngSwitchCase]="'selectMultiple'">
+                                        <div class="col-sm-2">
+                                            <div style="display:inline;white-space: nowrap;">
+                                                <label [for]="input1.ControlName"> {{input1.LabelName}}</label>
+                                                <i *ngIf="(input1.IncludeRefresh != null && input1.IncludeRefresh)"
+                                                    class="fa fa-refresh"
+                                                    style="font-size:10px;float: right;cursor: pointer;margin-top: 8px;margin-right: 2px;"
+                                                    tooltip="Refreshes [{{input1.LabelName}}]"
+                                                    [id]="getIdForRefresh(input1.ControlName)"></i>
+                                            </div>
+                                            <select multiple [formControlName]="input1.ControlName"
+                                                [name]="input1.ControlName" class="form-control"
+                                                [id]="input1.ControlName" [selectedIndex]="input1.CurrentValue">
+                                            </select>
+                                        </div>
+                                    </ng-template>
+                                    <!-- check Type CheckBOX -->
+                                    <ng-template [ngSwitchCase]="'checkbox'">
+                                        <div class="col-sm-1 checkboxPosition">
+                                            <label [for]="input1.ControlName"> {{input1.LabelName}}</label>
+                                            <input [formControlName]="input1.ControlName" [type]="input1.ValueType"
+                                                [name]="input1.ControlName" class="checkboxSize"
+                                                [id]="input1.ControlName"
+                                                [value]="input1.CurrentValue ? input1.CurrentValue  : ''" />
+                                        </div>
+                                    </ng-template>
+                                    <!-- check Type Select -->
+                                    <ng-template [ngSwitchCase]="'select'">
+                                        <div class="col-sm-2 forProjectstaff">
+                                            <label [for]="input1.ControlName"> {{input1.LabelName}}</label>
+                                            <select [formControlName]="input1.ControlName" [name]="input1.ControlName"
+                                                class="form-control" [id]="input1.ControlName"
+                                                [selectedIndex]="input1.CurrentValue">
+                                            </select>
+                                            <!-- Add refresh button for dropdowns -->
+                                            <div style="display:inline;white-space: nowrap;">
+                                                <i *ngIf="(input1.IncludeRefresh != null && input1.IncludeRefresh)"
+                                                    class="fa fa-refresh"
+                                                    style="font-size:10px;float: right;cursor: pointer;margin-top: 8px;margin-right: 2px;"
+                                                    [id]="getIdForRefresh(input1.ControlName)">
+                                                </i>
+                                            </div>
+                                            <div [id]="getAdditionalInfoIdValue(input1.ControlName)"
+                                                *ngIf="(input1.IncludeAdditionalInfo != null && input1.IncludeAdditionalInfo)"
+                                                class="divInfo">
+                                            </div>
+                                        </div>
+                                    </ng-template>
+                                    <ng-template [ngSwitchCase]="'span'">
+                                        <div style="margin-top:5px;" class="col-sm-4">
+                                            <span [class]="input1.CssClassName">{{input1.LabelName}}</span>
+                                        </div>
+                                    </ng-template>
+                                </ng-container>
+                            </div>
+                        </div>
+                    </ng-template>
+                </div>
+                <br>
+                <!-- <div *ngFor='let item of budgetColumnName'>
+            <ul>{{item}}</ul>
+        </div> -->
+                <table #tableMain class="table table-borderless">
+                    <thead>
+                        <tr>
+                            <!---------------------------------------------------- Get Column Name ------------------------------------------>
+                            <th>
+                                {{budgetColumnName}}
+                            </th>
+                            <th *ngFor="let productCol of productRegionBudgetData" [attr.id]="productCol.ProductId">
+                              {{productCol.ProductName}}
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {{regionBudgetData | json}}
+                        <tr *ngFor="let item of regionBudgetData">
+                            <td [attr.id]="item.MonthId">{{item.Month}}</td>
+                    
+                        </tr>
+                </table>
+            </div>
+        </form>
+    </div>
+</div>
